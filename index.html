@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Metric Time</title>
+  <link rel="icon" type="image/x-icon" href="icon.png">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Custom CSS for the digital look */
+    .digital-font {
+        font-family: 'Inter', monospace;
+        text-shadow: 0 0 5px #00e0e0;
+    }
+
+    #metric-date-name {
+        font-family: 'Inter', monospace;
+        text-color: rgba(0, 0, 0, 0.4);
+        margin: 10px;
+    }
+
+    .separator {
+        width: 1px;
+        height: 80%;
+        background-color: rgba(255, 255, 255, 0.3);
+        margin: 0 1rem;
+    }
+    .counter-group {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin: 0 0.25rem;
+        min-width: 40px; /* Ensure digits have space */
+    }
+    .digit-box {
+        font-size: 3rem;
+        line-height: 1;
+        padding: 0.5rem 0.25rem;
+        color: #00ffff;
+        background-color: rgba(0, 0, 0, 0.4);
+        border-radius: 0.5rem;
+        transition: color 0.1s;
+    }
+
+    /* Highlight the decimal digits slightly differently */
+    .decimal .digit-box {
+        color: #00ccff;
+    }
+  </style>
+</head>
+<body class="bg-gray-900 text-white min-h-screen flex flex-col items-center justify-center p-4">
+  <h1 class="text-3xl sm:text-4xl font-extrabold mb-8 text-cyan-400">Metric Time</h1>
+  
+  <div class="flex flex-wrap justify-center items-end bg-gray-800 p-6 rounded-xl shadow-2xl max-w-6xl mx-auto">
+    <div class="flex">
+        <div class="counter-group">
+            <span id="thousands" class="digit-box digital-font">E</span>
+            <span class="label text-sm text-gray-400 mt-2">Years</span>
+        </div>
+        <div class="counter-group">
+            <span id="hundreds" class="digit-box digital-font">E</span>
+            <span class="label text-sm text-gray-400 mt-2">Months</span>
+        </div>
+        <div class="counter-group">
+            <span id="tens" class="digit-box digital-font">E</span>
+            <span class="label text-sm text-gray-400 mt-2">Weeks</span>
+        </div>
+        <div class="counter-group">
+            <span id="ones" class="digit-box digital-font">E</span>
+            <span class="label text-sm text-gray-400 mt-2">Days</span>
+        </div>
+    </div>
+    
+    <div class="flex items-center mx-4 h-full pt-10 pb-4">
+        <span class="text-6xl text-cyan-300 digital-font">.</span>
+    </div>
+
+    <div class="flex decimal">
+        <div class="counter-group">
+            <span id="tenths" class="digit-box digital-font">E</span>
+            <span class="label text-sm text-gray-400 mt-2">Hours</span>
+        </div>
+        <div class="counter-group">
+            <span id="hundredths" class="digit-box digital-font">E</span>
+            <span class="label text-sm text-gray-400 mt-2">Minutes</span>
+        </div>
+        <div class="counter-group">
+            <span id="thousandths" class="digit-box digital-font">E</span>
+            <span class="label text-sm text-gray-400 mt-2">Seconds</span>
+        </div>
+        <div class="counter-group">
+            <span id="ten-thousandths" class="digit-box digital-font">E</span>
+            <span class="label text-sm text-gray-400 mt-2">Deciseconds</span>
+        </div>
+        <div class="counter-group">
+            <span id="hundred-thousandths" class="digit-box digital-font">E</span>
+            <span class="label text-sm text-gray-400 mt-2">Centiseconds</span>
+        </div>
+        <div class="counter-group">
+            <span id="millionths" class="digit-box digital-font">E</span>
+            <span class="label text-sm text-gray-400 mt-2">Milliseconds</span>
+        </div>
+    </div>
+  </div>
+
+  <em><div id="metric-date-name">
+    Error! JavaScript either isn't enabled or is malfunctioning.
+  </div></em>
+  <script>
+    /**
+     * Calculates the number of days since Jan 1, 2000, and updates the display
+     * for each place value.
+     */
+    function updateCounter() {
+      // NOTE: Using a hardcoded start date (epoch) of Jan 1, 2000 00:00:00 UTC
+      // ensures the metric time is always consistent regardless of the local timezone.
+      const startDate = new Date('2000-01-01T00:00:00Z'); 
+      const today = new Date();
+      
+      // Calculate total difference in milliseconds and convert to days
+      const diffInMs = today - startDate;
+      const diffInDays = diffInMs / (1000 * 60 * 60 * 24);
+
+      // --- INTEGER PART EXTRACTION ---
+      const daysInt = Math.floor(diffInDays);
+      
+      const thousands = Math.floor(daysInt / 1000) % 10;
+      const hundreds = Math.floor(daysInt / 100) % 10;
+      const tens = Math.floor(daysInt / 10) % 10;
+      const ones = daysInt % 10; // Simple modulo for the ones place
+
+      // --- DECIMAL PART EXTRACTION ---
+      const tenths = Math.floor(diffInDays * 10) % 10;
+      const hundredths = Math.floor(diffInDays * 100) % 10;
+      const thousandths = Math.floor(diffInDays * 1000) % 10;
+      
+      const ten_thousandths = Math.floor(diffInDays * 10000) % 10;
+      const hundred_thousandths = Math.floor(diffInDays * 100000) % 10;
+      
+      const millionths = Math.floor(diffInDays * 1000000) % 10;
+      
+      // --- DOM UPDATES ---
+      document.getElementById('thousands').textContent = thousands;
+      document.getElementById('hundreds').textContent = hundreds;
+      document.getElementById('tens').textContent = tens;
+      document.getElementById('ones').textContent = ones;
+      
+      document.getElementById('tenths').textContent = tenths;
+      document.getElementById('hundredths').textContent = hundredths;
+      document.getElementById('thousandths').textContent = thousandths;
+      
+      document.getElementById('ten-thousandths').textContent = ten_thousandths;
+      document.getElementById('hundred-thousandths').textContent = hundred_thousandths;
+      
+      document.getElementById('millionths').textContent = millionths;
+    }
+
+    // Set a very fast interval (0.5ms) for real-time updates
+    setInterval(updateCounter, 0.5);
+
+    // Run once immediately on load
+    updateCounter();
+  </script>
+</body>
+</html>
